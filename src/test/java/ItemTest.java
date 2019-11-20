@@ -12,7 +12,8 @@ public class ItemTest {
         Assert.assertEquals("Name", item.getName());
         Assert.assertEquals(0, item.getStores().size());
         Assert.assertEquals(0,item.getCost());
-        Assert.assertFalse(item.isPurchaseable());
+        Assert.assertFalse(item.isPurchasable());
+        Assert.assertEquals(0, item.getRecipeList().size());
     }
     @Test
     public void testItemFromDataWithStore()
@@ -21,35 +22,44 @@ public class ItemTest {
         Assert.assertEquals("Name", item.getName());
         Assert.assertEquals(123,item.getCost());
         Assert.assertTrue(item.getStores().contains("3"));
-        Assert.assertTrue(item.isPurchaseable());
+        Assert.assertTrue(item.isPurchasable());
+        Assert.assertEquals(0, item.getRecipeList().size());
     }
     @Test
     public void testItemAddStoreAndCost(){
-        Item item1 = new Item("  Name   ~   123   ","3");
+        Item item = new Item("  Name   ~   123   ","3");
         List<String> TestList = new ArrayList<>();
         TestList.add("1");
         TestList.add("2");
-        item1.AddStoreAndPrice(TestList,"123");
-        Assert.assertTrue(item1.getStores().contains("2"));
-        Assert.assertEquals(123,item1.getCost());
-        Assert.assertTrue(item1.isPurchaseable());
+        item.AddStoreAndPrice(TestList,123);
+        Assert.assertTrue(item.getStores().contains("2"));
+        Assert.assertEquals(123,item.getCost());
+        Assert.assertTrue(item.isPurchasable());
     }
     @Test
     public void testItemAddStoreAndCost2(){
-        Item item1 = new Item("Name");
+        Item item = new Item("Name");
         List<String> TestList = new ArrayList<>();
         TestList.add("1");
         TestList.add("2");
-        item1.AddStoreAndPrice(TestList,"123");
-        Assert.assertTrue(item1.getStores().contains("2"));
-        Assert.assertEquals(123,item1.getCost());
-        Assert.assertTrue(item1.isPurchaseable());
+        item.AddStoreAndPrice(TestList,123);
+        Assert.assertTrue(item.getStores().contains("2"));
+        Assert.assertEquals(123,item.getCost());
+        Assert.assertTrue(item.isPurchasable());
     }
     @Test
-    public void Purchaseable(){
-
-
+    public void CanAddItemRecipe(){
+        Item item = new Item("Name");
+        ItemRecipe IR = new ItemRecipe("Metal + Wood = Name");
+        item.AddRecipe(IR);
+        Assert.assertTrue(item.getRecipeList().size()>0);
     }
 
+    @Test
+    public void CanBeBoughtAt(){
+        Item item = new Item("  Name   ~   123   ","3");
+        Assert.assertFalse(item.CanBeBoughtAt("1"));
+        Assert.assertTrue(item.CanBeBoughtAt("3"));
+    }
 
 }
