@@ -1,38 +1,78 @@
+import java.util.List;
+
 public class ItemRecipe {
-    private String Item;
-    private String IngredientOne;
-    private String IngredientTwo;
-    private Item IngredientOneItem;
-    private Item IngredientTwoItem;
+    private String itemName;
+    private String ingredientOneName;
+    private String ingredientTwoName;
+
+
+
+    private Item item;
+    private Item ingredientOne;
+    private Item ingredientTwo;
 
     ItemRecipe(String Data){
         String[] DividedByPlus = Data.split("\\+");
         String[] DividedByEquals = DividedByPlus[1].split("=");
-        this.IngredientOne = DividedByPlus[0].trim();
-        this.IngredientTwo = DividedByEquals[0].trim();
-        this.Item = DividedByEquals[1].trim();
+        this.ingredientOneName = DividedByPlus[0].trim();
+        this.ingredientTwoName = DividedByEquals[0].trim();
+        this.itemName = DividedByEquals[1].trim();
     }
 
-    public String getItem() {
-        return Item;
+    public String getItemName() {
+        return itemName;
     }
-    public String getIngredientOne() {
-        return IngredientOne;
+    public void setItemName(Item itemName) {
+        this.item = itemName;
     }
-    public String getIngredientTwo() {
-        return IngredientTwo;
+    public void setItem(Item item) {
+        this.item = item;
     }
-    public void setIngredientOneItem(Item ingredientOneItem) {
-        IngredientOneItem = ingredientOneItem;
+
+    public String getIngredientOneName() {
+        return ingredientOneName;
     }
-    public void setIngredientTwoItem(Item ingredientTwoItem) {
-        IngredientTwoItem = ingredientTwoItem;
+    public String getIngredientTwoName() {
+        return ingredientTwoName;
+    }
+    public void setIngredientOne(Item ingredientOne) {
+        this.ingredientOne = ingredientOne;
+    }
+    public void setIngredientTwo(Item ingredientTwo) {
+        this.ingredientTwo = ingredientTwo;
     }
     public boolean IngredientOnePurchasable(){
-        return IngredientOneItem.isPurchasable();
+        return ingredientOne.isPurchasable();
     }
     public boolean IngredientTwoPurchasable(){
-        return IngredientTwoItem.isPurchasable();
+        return ingredientTwo.isPurchasable();
+    }
+    public Item getIngredientOne() {
+        return ingredientOne;
+    }
+    public Item getIngredientTwo() {
+        return ingredientTwo;
+    }
+
+
+
+    boolean ThisRecipeCanBeMadeOrBoughtAtStore(String store,List<Item> checkedItems){
+        if(checkedItems.contains(ingredientOne)||checkedItems.contains(ingredientTwo)){
+            return false;
+        }
+        else if(ingredientOne.itemCanBeBoughtOrMadeFromStore(store,checkedItems)&&ingredientTwo.itemCanBeBoughtOrMadeFromStore(store,checkedItems)){
+            item.addRecipeToTemporaryPurchasableAtStoreList(this);
+            return true;
+        }
+        return false;
+    }
+
+    int cheapestPrice(String store){
+        return ingredientOne.determineCheapestPrice(store)+ingredientTwo.determineCheapestPrice(store);
+    }
+
+    String printRecipe(){
+        return item.getName()+"="+ingredientOne.getName()+"+"+ingredientTwo.getName();
     }
 
 }

@@ -4,9 +4,9 @@ public class ItemRecipeTest {
     @Test
     public void CreationFromDataTest(){
             ItemRecipe IR = new ItemRecipe(" IngredientOne + IngredientTwo = Item ");
-            Assert.assertEquals("IngredientOne", IR.getIngredientOne());
-            Assert.assertEquals("IngredientTwo", IR.getIngredientTwo());
-            Assert.assertEquals("Item", IR.getItem());
+            Assert.assertEquals("IngredientOne", IR.getIngredientOneName());
+            Assert.assertEquals("IngredientTwo", IR.getIngredientTwoName());
+            Assert.assertEquals("Item", IR.getItemName());
     }
 
     @Test
@@ -14,8 +14,8 @@ public class ItemRecipeTest {
         ItemRecipe IR = new ItemRecipe(" IngredientOne + IngredientTwo = Item ");
         Item IngredientOneItem = new Item("Metal ~ 720","1");
         Item IngredientTwoItem = new Item("Wood ~ 940","3");
-        IR.setIngredientOneItem(IngredientOneItem);
-        IR.setIngredientTwoItem(IngredientTwoItem);
+        IR.setIngredientOne(IngredientOneItem);
+        IR.setIngredientTwo(IngredientTwoItem);
         Assert.assertTrue(IR.IngredientOnePurchasable());
         Assert.assertTrue(IR.IngredientTwoPurchasable());
     }
@@ -25,8 +25,8 @@ public class ItemRecipeTest {
         ItemRecipe IR = new ItemRecipe(" IngredientOne + IngredientTwo = Item ");
         Item IngredientOneItem = new Item("Metal ~ 720","1");
         Item IngredientTwoItem = new Item("Wood");
-        IR.setIngredientOneItem(IngredientOneItem);
-        IR.setIngredientTwoItem(IngredientTwoItem);
+        IR.setIngredientOne(IngredientOneItem);
+        IR.setIngredientTwo(IngredientTwoItem);
         Assert.assertTrue(IR.IngredientOnePurchasable());
         Assert.assertFalse(IR.IngredientTwoPurchasable());
     }
