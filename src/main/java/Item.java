@@ -36,105 +36,35 @@ public class Item {
     void AddRecipe(ItemRecipe IR){
         RecipeList.add(IR);
     }
-    boolean PurchasableAtStore(String store){
+    boolean purchasableAtStore(String store){
         return Stores.contains(store);
     }
-/*
-    int DeterminePrice(String store){
-        if(PurchasableAtStore(store)) {
-            return Cost;
-        }
-        List<Item> checkedItems = new ArrayList<>();
-        return DeterminePrice(RecipeList,store,checkedItems);
-    }
-    int DeterminePrice(String store,List<Item> checkedItems){
-        if(PurchasableAtStore(store)) {
-            return Cost;
-        }
-        return DeterminePrice(TempPossible,store,checkedItems);
-    }
-
-    int DeterminePrice(List<ItemRecipe> Possible,String Store) {
-            int Price;
-            int Temp = 0;
-            for (ItemRecipe IR : Possible) {
-                Price = IR.DetermineRecipePrice(Store);
-                if (Price > 0 && Price < Temp) {
-                    Temp = Price;
-                } else if (Temp == 0) {
-                    Temp = Price;
-                }
-            }
-            return Temp;
-        }
-        return -1;
-    }
-    int DetermineEarliestPrice(){
-        try {
-            String Store;
-            for (int i = 1; i < 6; i++) {
-                Store = Integer.toString(i);
-                List<Item> ItemCheck = new ArrayList<>();
-                if(PurchaseOrFuseAtStore(Store,ItemCheck)) {
-                    List<Item> checkedItems = new ArrayList<>();
-                    return DeterminePrice(TempPossible,Store,checkedItems);
-                }
-            }
-            throw new IllegalArgumentException("Never possible to make " + this.Name);
-        }
-        catch(IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-        return -1;
-    }
-*/
-
-/*
-    List<ItemRecipe> TempPossible;
-    boolean PurchaseOrFuseAtStore(String store,List<Item> checkedItems){
-        List<Item> copyCheck = new ArrayList<>(checkedItems);
-        if(!copyCheck.contains(this)) {
-            copyCheck.add(this);
-            this.TempPossible = new ArrayList<>();
-            if (PurchasableAtStore(store)) {
-                return true;
-            }
-            else {
-                boolean temp = false;
-                for (ItemRecipe IR : RecipeList) {
-                    if (IR.PurchaseableAtStore(store, copyCheck)) {
-                        this.TempPossible.add(IR);
-                        temp = true;
-                    }
-                }
-                if (temp) {
-                    return true;
-                }
-            }
-        }
-        this.TempPossible = new ArrayList<>();
-        return false;
-    }
-
-*/
 
     //-----------------------------------------------------------------------------
-    void printCheapestItemRecipe() {
-        if(itemCanBeBoughtOrMadeFromStore("5")){
+    void printCheapestRecipe(){
+        printItemRecipeTree("5");
+    }
 
+    boolean printItemRecipeTree(String store) {
+        if(itemCanBeBoughtOrMadeFromStore(store)){
+            if(this.purchasableAtStore(store)){
+                System.out.println(this.getName()+" can be bought directly for "+this.getCost());
+            }
+            else{
+                int total = this.determineCheapestPrice(store);
+                String itemRecipeTree = cheapestItemRecipe.recipeTree(store);
+                System.out.println(itemRecipeTree+"\nThis recipe can be made from store "+store+" for:"+total);
+            }
+            return true;
         }
+        return false;
     }
     void printEarliestItemRecipe() {
         String store;
         for(int i =1;i<6;i++){
             store =Integer.toString(i);
-            if(itemCanBeBoughtOrMadeFromStore(store)){
-                if(this.PurchasableAtStore(store)){
-
-                }
-                else{
-
-                }
+            if(printItemRecipeTree(store)){
+                break;
             }
         }
     }
@@ -166,26 +96,36 @@ public class Item {
 
 //-------------------------------------------------------------------------
 
-
+    //Start
     boolean itemCanBeBoughtOrMadeFromStore(String store) {
         List<Item> checkedItems = new ArrayList<>();
-        return this.itemCanBeBoughtOrMadeFromStore(store,checkedItems);
+        List<ItemRecipe> checkedRecipes = new ArrayList<>();
+        return this.itemCanBeBoughtOrMadeFromStore(store,checkedItems,checkedRecipes);
     }
-    boolean itemCanBeBoughtOrMadeFromStore(String store,List<Item> checkedItems) {
-        if(PurchasableAtStore(store)) {
+
+    boolean itemCanBeBoughtOrMadeFromStore(String store,List<Item> checkedItems,List<ItemRecipe> checkedRecipes) {
+        if(purchasableAtStore(store)) {
             return true;
         }
         else {
             List<Item> copyCheckedItems = new ArrayList<>(checkedItems);
             copyCheckedItems.add(this);
-            return hasRecipeThatCanBeMadeAtStore(store, copyCheckedItems);
+            return hasRecipeThatCanBeMadeAtStore(store, copyCheckedItems,checkedRecipes);
         }
     }
-    boolean hasRecipeThatCanBeMadeAtStore(String store,List<Item> checkedItems) {
+    boolean hasRecipeThatCanBeMadeAtStore(String store,List<Item> checkedItems,List<ItemRecipe> checkedRecipes) {
         boolean temp = false;
         for(ItemRecipe IR: RecipeList) {
-            if(IR.ThisRecipeCanBeMadeOrBoughtAtStore(store,checkedItems)) {
-                temp = true;
+            if(checkedRecipes.contains(IR)) {
+                if(IR.tempCanBeMadeFromStore) {
+                    temp = true;
+                }
+            }
+            else{
+                checkedRecipes.add(IR);
+                if (IR.ThisRecipeCanBeMadeOrBoughtAtStore(store, checkedItems,checkedRecipes)) {
+                    temp = true;
+                }
             }
         }
         return temp;
@@ -194,12 +134,6 @@ public class Item {
     void addRecipeToTemporaryPurchasableAtStoreList(ItemRecipe IR) {
         temporaryPurchasableAtStoreList.add(IR);
     }
-
-
-
-
-
-
 //------------------------------------------------------------------------
 
 
@@ -220,31 +154,20 @@ public class Item {
         }
     }
     int determineCheapestPrice(String store) {
-        if(PurchasableAtStore(store)) {
+        if(purchasableAtStore(store)) {
             return getCost();
         }
         else {
-            this.buildCheapestRecipe(store);
+            if(this.cheapestItemRecipe==null) {
+                this.buildCheapestRecipe(store);
+            }
             return this.cheapestItemRecipe.cheapestPrice(store);
         }
     }
 
 
 
-
-
-
 //--------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
 
 
     public List<ItemRecipe> getRecipeList() {

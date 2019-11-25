@@ -1,10 +1,8 @@
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
 public class ItemTest {
 
 
@@ -64,8 +62,8 @@ public class ItemTest {
     @Test
     public void CanBeBoughtAt(){
         Item itemFilled = new Item("  Name   ~   123   ","5");
-        Assert.assertFalse(itemFilled.PurchasableAtStore("1"));
-        Assert.assertTrue(itemFilled.PurchasableAtStore("5"));
+        Assert.assertFalse(itemFilled.purchasableAtStore("1"));
+        Assert.assertTrue(itemFilled.purchasableAtStore("5"));
     }
 
     @Test
